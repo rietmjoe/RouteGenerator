@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Maps-Link Builder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Google-Maps Link Builder</h1>
+      <p class="subtitle">Etappen hinzufügen → Vorschläge auswählen → Link generieren</p>
+
+      <div id="stops" class="stops"></div>
+
+      <div class="actions">
+        <button id="addStop" class="btn">+ Etappe</button>
+        <button id="generate" class="btn primary">Link generieren</button>
+      </div>
+
+      <div class="output">
+        <div class="label">Route (Text)</div>
+        <div id="routeText" class="routeText">–</div>
+
+        <div class="label">Google-Maps-Gesamtlink</div>
+        <div class="linkRow">
+          <input id="linkOut" class="linkOut" type="text" readonly placeholder="Hier erscheint der Link…" />
+          <button id="copy" class="btn">Kopieren</button>
+          <a id="open" class="btn" target="_blank" rel="noopener">Öffnen</a>
+        </div>
+
+        <p class="hint">
+          Tipp: Die Vorschläge kommen von OpenStreetMap (Nominatim). Wenn du später “echtes” Google-Autocomplete willst,
+          brauchst du die Google Places API (API-Key).
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <template id="stopTemplate">
+    <div class="stop">
+      <div class="stopHead">
+        <span class="stopNr"></span>
+        <button class="iconBtn remove" title="Entfernen" aria-label="Entfernen">✕</button>
+      </div>
+
+      <input class="stopInput" type="text" placeholder="Ort eingeben (z.B. Edinburgh)…" autocomplete="off" />
+      <div class="suggestions"></div>
+    </div>
+  </template>
+
+  <script src="script.js"></script>
+</body>
+</html>
