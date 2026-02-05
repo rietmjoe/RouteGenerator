@@ -2,9 +2,11 @@ const stopsEl = document.getElementById("stops");
 const tpl = document.getElementById("stopTemplate");
 
 const freeInput = document.getElementById("freeInput");
+const generateTextBtn = document.getElementById("generateText");
+const clearTextBtn = document.getElementById("clearText");
 
 const addStopBtn = document.getElementById("addStop");
-const generateBtn = document.getElementById("generate");
+const generateStopsBtn = document.getElementById("generateStops");
 
 const routeTextEl = document.getElementById("routeText");
 const linkOutEl = document.getElementById("linkOut");
@@ -21,6 +23,22 @@ function parseFreeText(text) {
     .split(/-|→|>|\\n/)
     .map(s => s.trim())
     .filter(Boolean);
+}
+
+function setOutput(values) {
+  if (values.length < 2) {
+    routeTextEl.textContent = "Bitte mind. 2 Orte eingeben.";
+    linkOutEl.value = "";
+    openA.removeAttribute("href");
+    return;
+  }
+
+  routeTextEl.textContent = values.join(" → ");
+  const path = values.map(encodeStop).join("/");
+  const url = `https://www.google.com/maps/dir/${path}`;
+
+  linkOutEl.value = url;
+  openA.href = url;
 }
 
 function updateNumbers() {
@@ -117,39 +135,36 @@ function createStop(initialValue = "") {
   updateNumbers();
 }
 
-// --- Initial stops (2 Felder) ---
+// --- Initial stops ---
 createStop("");
 createStop("");
 
-// --- Actions ---
+// --- Buttons ---
 addStopBtn.addEventListener("click", () => createStop(""));
 
-generateBtn.addEventListener("click", () => {
-  let values = [];
+generateTextBtn.addEventListener("click", () => {
+  const values = parseFreeText(freeInput.value);
+  setOutput(values);
+});
 
-  // Freitext hat Vorrang, falls gefüllt
-  if (freeInput.value.trim()) {
-    values = parseFreeText(freeInput.value);
-  } else {
-    values = [...stopsEl.querySelectorAll(".stopInput")]
-      .map(i => i.value.trim())
-      .filter(Boolean);
+generateStopsBtn.addEventListener("click", () => {
+  const values = [...stopsEl.querySelectorAll(".stopInput")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+  setOutput(values);
+});
+
+clearTextBtn.addEventListener("click", () => {
+  freeInput.value = "";
+  freeInput.focus();
+});
+
+// Ctrl+Enter im Freitextfeld generiert
+freeInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    generateTextBtn.click();
   }
-
-  if (values.length < 2) {
-    routeTextEl.textContent = "Bitte mind. 2 Orte eingeben.";
-    linkOutEl.value = "";
-    openA.removeAttribute("href");
-    return;
-  }
-
-  routeTextEl.textContent = values.join(" → ");
-
-  const path = values.map(encodeStop).join("/");
-  const url = `https://www.google.com/maps/dir/${path}`;
-
-  linkOutEl.value = url;
-  openA.href = url;
 });
 
 copyBtn.addEventListener("click", async () => {

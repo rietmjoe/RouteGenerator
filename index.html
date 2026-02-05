@@ -10,29 +10,48 @@
   <main class="wrap">
     <section class="card">
       <h1>Google-Maps Link Builder</h1>
-      <p class="subtitle">Freitext oder Etappen hinzufügen → Link generieren</p>
+      <p class="subtitle">Freitext oder Etappen → Link generieren</p>
 
       <!-- Schnellmodus -->
-      <div class="freeText">
-        <label for="freeInput">Schnellmodus (Freitext)</label>
+      <div class="block">
+        <div class="blockHead">
+          <div>
+            <div class="blockTitle">Schnellmodus (Freitext)</div>
+            <div class="blockHint">Trennzeichen: <code>-</code> <code>→</code> <code>&gt;</code> oder Zeilenumbruch · Ctrl+Enter generiert</div>
+          </div>
+          <div class="blockBtns">
+            <button id="generateText" class="btn primary">Aus Freitext generieren</button>
+            <button id="clearText" class="btn">Leeren</button>
+          </div>
+        </div>
+
         <textarea
           id="freeInput"
+          class="textArea"
           placeholder="z.B. Winterthur - Zürich - Bern - Genf - Lausanne - Sion"
           rows="3"
         ></textarea>
-        <div class="smallHint">Trennzeichen: <code>-</code> <code>→</code> <code>&gt;</code> oder Zeilenumbruch</div>
       </div>
 
       <div class="divider">oder</div>
 
-      <!-- Etappen-Modus -->
-      <div id="stops" class="stops"></div>
+      <!-- Etappen -->
+      <div class="block">
+        <div class="blockHead">
+          <div>
+            <div class="blockTitle">Etappen (mit Vorschlägen)</div>
+            <div class="blockHint">Tippe mind. 3 Zeichen, dann Vorschlag anklicken</div>
+          </div>
+          <div class="blockBtns">
+            <button id="addStop" class="btn">+ Etappe</button>
+            <button id="generateStops" class="btn primary">Aus Etappen generieren</button>
+          </div>
+        </div>
 
-      <div class="actions">
-        <button id="addStop" class="btn">+ Etappe</button>
-        <button id="generate" class="btn primary">Link generieren</button>
+        <div id="stops" class="stops"></div>
       </div>
 
+      <!-- Output -->
       <div class="output">
         <div class="label">Route (Text)</div>
         <div id="routeText" class="routeText">–</div>
@@ -45,8 +64,7 @@
         </div>
 
         <p class="hint">
-          Autocomplete nutzt OpenStreetMap (Nominatim) – super für kleine Projekte, hat aber Rate-Limits.
-          Für Google-Places-Autocomplete brauchst du später einen API-Key.
+          Autocomplete nutzt OpenStreetMap (Nominatim). Für Google Places Autocomplete bräuchtest du später einen API-Key.
         </p>
       </div>
     </section>
