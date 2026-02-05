@@ -23,7 +23,7 @@
         <div class="blockHead">
           <div>
             <div class="blockTitle">Schnellmodus (Freitext)</div>
-            <div class="blockHint">Trennzeichen: <code>-</code> <code>,</code> oder Zeilenumbruch · Ctrl+Enter generiert</div>
+            <div class="blockHint">Trennzeichen: <code>-</code> <code>,</code> oder Zeilenumbruch</div>
           </div>
           <div class="blockBtns">
             <button id="generateText" class="btn primary">Aus Freitext generieren</button>
@@ -40,9 +40,9 @@ Genf - Lausanne
 Sion"
           rows="4"
         ></textarea>
-      </div>
 
-      <div class="divider">oder</div>
+        <div id="status" class="status">Bereit.</div>
+      </div>
 
       <!-- Etappen -->
       <div class="block">
@@ -50,10 +50,6 @@ Sion"
           <div>
             <div class="blockTitle">Etappen (mit Vorschlägen)</div>
             <div class="blockHint">Tippe mind. 3 Zeichen, dann Vorschlag anklicken</div>
-          </div>
-          <div class="blockBtns">
-            <button id="addStop" class="btn">+ Etappe</button>
-            <button id="generateStops" class="btn primary">Aus Etappen generieren</button>
           </div>
         </div>
 
@@ -78,6 +74,14 @@ Sion"
       </div>
     </section>
   </main>
+
+  <!-- Sticky bottom bar (immer sichtbar) -->
+  <div class="bottomBar">
+    <div class="bottomInner">
+      <button id="addStop" class="btn">+ Stopp hinzufügen</button>
+      <button id="generateStops" class="btn primary">Link aus Etappen generieren</button>
+    </div>
+  </div>
 
   <template id="stopTemplate">
     <div class="stop">

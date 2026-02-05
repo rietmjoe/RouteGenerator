@@ -1,24 +1,31 @@
-const stopsEl = document.getElementById("stops");
-const tpl = document.getElementById("stopTemplate");
+function byId(id) {
+  const el = document.getElementById(id);
+  if (!el) throw new Error(`Element #${id} not found`);
+  return el;
+}
 
-const freeInput = document.getElementById("freeInput");
-const generateTextBtn = document.getElementById("generateText");
-const clearTextBtn = document.getElementById("clearText");
+const stopsEl = byId("stops");
+const tpl = byId("stopTemplate");
 
-const addStopBtn = document.getElementById("addStop");
-const generateStopsBtn = document.getElementById("generateStops");
+const freeInput = byId("freeInput");
+const generateTextBtn = byId("generateText");
+const clearTextBtn = byId("clearText");
+const statusEl = byId("status");
 
-const routeTextEl = document.getElementById("routeText");
-const linkOutEl = document.getElementById("linkOut");
-const copyBtn = document.getElementById("copy");
-const openA = document.getElementById("open");
+const addStopBtn = byId("addStop");
+const generateStopsBtn = byId("generateStops");
+
+const routeTextEl = byId("routeText");
+const linkOutEl = byId("linkOut");
+const copyBtn = byId("copy");
+const openA = byId("open");
 
 // --- Helpers ---
 function encodeStop(s) {
   return encodeURIComponent(s.trim()).replaceAll("%20", "+");
 }
 
-// akzeptiert: "-" oder "," oder Zeilenumbruch
+// akzeptiert: "-" oder "," oder Zeilenumbruch (inkl. Windows \r\n)
 function parseFreeText(text) {
   return text
     .split(/-|,|\r?\n/)
@@ -26,12 +33,16 @@ function parseFreeText(text) {
     .filter(Boolean);
 }
 
+function setStatus(msg) {
+  statusEl.textContent = msg;
+}
+
 function setOutput(values) {
   if (values.length < 2) {
     routeTextEl.textContent = "Bitte mind. 2 Orte eingeben.";
     linkOutEl.value = "";
     openA.removeAttribute("href");
-    return;
+    return false;
   }
 
   routeTextEl.textContent = values.join(" → ");
@@ -40,6 +51,7 @@ function setOutput(values) {
 
   linkOutEl.value = url;
   openA.href = url;
+  return true;
 }
 
 function updateNumbers() {
@@ -122,7 +134,6 @@ function createStop(initialValue = "") {
     }, 250);
   });
 
-  // Klick ausserhalb -> Suggestions zu
   document.addEventListener("click", (e) => {
     if (!node.contains(e.target)) suggBox.classList.remove("show");
   });
@@ -140,34 +151,44 @@ function createStop(initialValue = "") {
 createStop("");
 createStop("");
 
-// --- Buttons ---
-addStopBtn.addEventListener("click", () => createStop(""));
-
+// --- Freitext actions ---
 generateTextBtn.addEventListener("click", () => {
-  const values = parseFreeText(freeInput.value);
-  setOutput(values);
-});
+  const raw = freeInput.value;
+  const values = parseFreeText(raw);
 
-generateStopsBtn.addEventListener("click", () => {
-  const values = [...stopsEl.querySelectorAll(".stopInput")]
-    .map(i => i.value.trim())
-    .filter(Boolean);
-  setOutput(values);
+  setStatus(`Freitext erkannt: ${values.length} Stop(s).`);
+
+  const ok = setOutput(values);
+  if (!ok) setStatus("Bitte mind. 2 Orte im Freitext eingeben.");
 });
 
 clearTextBtn.addEventListener("click", () => {
   freeInput.value = "";
   freeInput.focus();
+  setStatus("Freitext geleert.");
 });
 
-// Ctrl+Enter / Cmd+Enter im Freitextfeld generiert
+// ENTER im Freitextfeld generiert (ohne Shift), Shift+Enter macht neue Zeile
 freeInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+  if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
     generateTextBtn.click();
   }
 });
 
+// --- Stops actions ---
+addStopBtn.addEventListener("click", () => createStop(""));
+
+generateStopsBtn.addEventListener("click", () => {
+  const values = [...stopsEl.querySelectorAll(".stopInput")]
+    .map(i => i.value.trim())
+    .filter(Boolean);
+
+  setStatus(`Etappen erkannt: ${values.length} Stop(s).`);
+  setOutput(values);
+});
+
+// --- Copy ---
 copyBtn.addEventListener("click", async () => {
   const text = linkOutEl.value.trim();
   if (!text) return;

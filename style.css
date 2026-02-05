@@ -15,16 +15,15 @@
 body{
   margin:0;
   min-height:100vh;
-  display:grid;
-  place-items:center;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
 }
 
+/* Platz lassen für die BottomBar */
 .wrap{
   width: min(920px, 92vw);
-  padding: 22px;
+  margin: 22px auto 110px; /* unten Platz */
 }
 
 .card{
@@ -47,7 +46,6 @@ h1{
   border-radius: 14px;
   background: rgba(132, 147, 74, 0.10);
   border: 1px solid rgba(132, 147, 74, 0.22);
-  color: var(--text);
   line-height: 1.35;
 }
 
@@ -61,6 +59,7 @@ h1{
   border: 1px solid rgba(132, 147, 74, 0.18);
   border-radius: 18px;
   padding: 14px;
+  margin-top: 14px;
 }
 
 .blockHead{
@@ -99,7 +98,6 @@ h1{
 
 .textArea{
   width: 100%;
-  max-width:100%;
   padding: 12px;
   border-radius: 12px;
   border: 1px solid rgba(73,40,40,0.16);
@@ -115,11 +113,10 @@ h1{
   box-shadow: 0 0 0 3px rgba(132, 147, 74, 0.18);
 }
 
-.divider{
-  text-align:center;
+.status{
+  margin-top: 10px;
+  font-size: 13px;
   color: var(--muted);
-  margin: 14px 0;
-  font-size:13px;
 }
 
 .stops{
@@ -269,6 +266,27 @@ h1{
   line-height: 1.35;
 }
 
+/* Sticky BottomBar */
+.bottomBar{
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: rgba(236,236,236,0.92);
+  border-top: 1px solid rgba(73,40,40,0.12);
+  backdrop-filter: blur(8px);
+  padding: 12px 14px;
+}
+
+.bottomInner{
+  width: min(920px, 92vw);
+  margin: 0 auto;
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  flex-wrap:wrap;
+}
+
 @media (max-width: 520px){
   h1{ font-size: 28px; }
+  .bottomInner{ justify-content: stretch; }
+  .bottomInner .btn{ flex: 1 1 auto; }
 }
