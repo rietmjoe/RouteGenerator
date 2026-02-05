@@ -18,9 +18,10 @@ function encodeStop(s) {
   return encodeURIComponent(s.trim()).replaceAll("%20", "+");
 }
 
+// akzeptiert: "-" oder "," oder Zeilenumbruch
 function parseFreeText(text) {
   return text
-    .split(/-|→|>|\\n/)
+    .split(/-|,|\r?\n/)
     .map(s => s.trim())
     .filter(Boolean);
 }
@@ -159,7 +160,7 @@ clearTextBtn.addEventListener("click", () => {
   freeInput.focus();
 });
 
-// Ctrl+Enter im Freitextfeld generiert
+// Ctrl+Enter / Cmd+Enter im Freitextfeld generiert
 freeInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();

@@ -10,6 +10,12 @@
   <main class="wrap">
     <section class="card">
       <h1>Google-Maps Link Builder</h1>
+
+      <div class="intro">
+        Ich han die Website gmacht, will Google Maps bi de normale Routeplanig nur bis zu
+        <strong>10 Ziele (Start + 9 Zwischenstopps)</strong> erlaubt. Mit dem Tool chasch di Stops schnell als Link ufbaue.
+      </div>
+
       <p class="subtitle">Freitext oder Etappen → Link generieren</p>
 
       <!-- Schnellmodus -->
@@ -17,7 +23,7 @@
         <div class="blockHead">
           <div>
             <div class="blockTitle">Schnellmodus (Freitext)</div>
-            <div class="blockHint">Trennzeichen: <code>-</code> <code>→</code> <code>&gt;</code> oder Zeilenumbruch · Ctrl+Enter generiert</div>
+            <div class="blockHint">Trennzeichen: <code>-</code> <code>,</code> oder Zeilenumbruch · Ctrl+Enter generiert</div>
           </div>
           <div class="blockBtns">
             <button id="generateText" class="btn primary">Aus Freitext generieren</button>
@@ -28,8 +34,11 @@
         <textarea
           id="freeInput"
           class="textArea"
-          placeholder="z.B. Winterthur - Zürich - Bern - Genf - Lausanne - Sion"
-          rows="3"
+          placeholder="z.B.
+Winterthur, Zürich, Bern
+Genf - Lausanne
+Sion"
+          rows="4"
         ></textarea>
       </div>
 
