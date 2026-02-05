@@ -4,7 +4,216 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RouteGenerator</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root{
+      --bg1:#0b1220; --bg2:#0f172a;
+      --card:rgba(255,255,255,.08);
+      --cardBorder:rgba(255,255,255,.14);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.62);
+      --inputBg:rgba(0,0,0,.18);
+      --inputBorder:rgba(255,255,255,.16);
+      --accent:rgba(59,130,246,.22);
+      --accentBorder:rgba(59,130,246,.35);
+      --shadow:0 18px 60px rgba(0,0,0,.45);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% 20%, rgba(236, 72, 153, 0.18), transparent 60%),
+        radial-gradient(900px 600px at 80% 30%, rgba(59, 130, 246, 0.16), transparent 55%),
+        linear-gradient(180deg,var(--bg1),var(--bg2));
+      min-height:100vh;
+    }
+    .top{
+      position:sticky; top:0; z-index:10;
+      background: rgba(15,23,42,.72);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+    }
+    .topInner{
+      width:min(1050px,92vw);
+      margin:0 auto; padding:14px 0;
+      display:flex; justify-content:space-between; gap:16px;
+      align-items:flex-start; flex-wrap:wrap;
+    }
+    .brand{font-size:18px; font-weight:800}
+    .tagline{margin-top:4px; color:var(--muted); font-size:13px; line-height:1.25}
+    .tripBox{display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap}
+    .tripBox label{font-size:12px; color:var(--muted); display:block}
+    .tripBox input{
+      height:40px; padding:0 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.14); color:var(--text); outline:none;
+      width:min(260px,70vw);
+    }
+
+    .wrap{width:min(1050px,92vw); margin:18px auto 40px;}
+    .tabs{display:flex; gap:10px; flex-wrap:wrap; margin: 6px 0 14px;}
+    .tab{
+      height:38px; padding:0 14px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:var(--text); cursor:pointer; font-size:14px;
+    }
+    .tab.active{background:rgba(59,130,246,.22); border-color:rgba(59,130,246,.35)}
+    .panel{display:none}
+    .panel.active{display:block}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--cardBorder);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      padding:20px;
+      backdrop-filter: blur(10px);
+    }
+    h2{margin:0 0 6px; font-size:22px}
+    .muted{color:var(--muted); margin:0 0 14px; line-height:1.35}
+
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+    @media (max-width: 900px){ .grid2{grid-template-columns:1fr} }
+
+    .block{
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      padding:14px;
+    }
+    .blockHead{
+      display:flex; justify-content:space-between; align-items:flex-start;
+      gap:12px; flex-wrap:wrap; margin-bottom:10px;
+    }
+    .blockTitle{font-size:14px; font-weight:800}
+    .blockHint{margin-top:4px; color:var(--muted); font-size:12px}
+    .blockHint code{
+      padding:2px 6px; border-radius:8px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+    .blockBtns{display:flex; gap:10px; flex-wrap:wrap}
+
+    .textArea{
+      width:100%; min-height:160px; padding:12px;
+      border-radius:12px; border:1px solid var(--inputBorder);
+      background:var(--inputBg); color:var(--text);
+      outline:none; resize: vertical;
+    }
+    .textArea:focus{
+      border-color: rgba(59,130,246,.55);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+    }
+    .status{margin-top:10px; font-size:13px; color:var(--muted)}
+    .smallMuted{margin-top:10px; font-size:12px; color:var(--muted)}
+
+    .stops{display:grid; gap:12px}
+    .stop{background: rgba(0,0,0,.10); border:1px solid rgba(255,255,255,.10); border-radius:16px; padding:12px;}
+    .stopHead{display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; color:var(--muted); font-size:13px;}
+    .stopInput{
+      width:100%; height:40px; padding:0 12px;
+      border-radius:12px; border:1px solid var(--inputBorder);
+      background:var(--inputBg); color:var(--text); outline:none;
+    }
+    .stopInput:focus{
+      border-color: rgba(59,130,246,.55);
+      box-shadow: 0 0 0 3px rgba(59,130,246,.18);
+    }
+    .suggestions{
+      margin-top:8px; border-radius:12px; overflow:hidden;
+      display:none; border:1px solid rgba(255,255,255,.12);
+    }
+    .suggestions.show{display:block}
+    .sugg{
+      padding:10px 12px; background: rgba(15,23,42,.92);
+      border-top:1px solid rgba(255,255,255,.08);
+      cursor:pointer; font-size:14px;
+    }
+    .sugg:first-child{border-top:none}
+    .sugg:hover{background: rgba(30,41,59,.92)}
+
+    .output{margin-top:14px; padding-top:14px; border-top:1px solid rgba(255,255,255,.10);}
+    .label{color:var(--muted); font-size:13px; margin:10px 0 6px}
+    .routeText{
+      padding:10px 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14);
+      min-height:44px; display:flex; align-items:center; overflow-wrap:anywhere;
+    }
+    .linkRow{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+    .linkOut{
+      flex:1 1 520px; height:40px; padding:0 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14); color:var(--text);
+    }
+
+    .btn{
+      height:40px; padding:0 14px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color:var(--text); cursor:pointer; text-decoration:none;
+      display:inline-flex; align-items:center; justify-content:center;
+      gap:8px; font-size:14px; line-height:1; white-space:nowrap;
+    }
+    .btn:hover{background: rgba(255,255,255,.12)}
+    .btn.primary{background: var(--accent); border-color: var(--accentBorder);}
+    .btn.primary:hover{background: rgba(59,130,246,.28)}
+    .btnTight{min-width:120px}
+    .iconBtn{
+      border:none; background:transparent; color:var(--muted);
+      cursor:pointer; font-size:16px; padding:4px 8px;
+    }
+    .iconBtn:hover{color:var(--text)}
+
+    /* Packlist */
+    .rowHead{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;}
+    .rowBtns{display:flex; gap:10px; flex-wrap:wrap}
+    .input, .select{
+      height:40px; padding:0 12px; border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.14); color:var(--text); outline:none;
+    }
+    .select{min-width:160px}
+    .addItem{display:flex; gap:10px; flex-wrap:wrap; margin: 8px 0 12px;}
+    .packList{display:grid; gap:10px; margin-top:10px;}
+    .packGroup{border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); border-radius:16px; padding:12px;}
+    .packGroupTitle{font-weight:800; font-size:14px; margin-bottom:8px;}
+    .packItem{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:8px 10px; border-radius:12px; border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.10); margin-top:8px;
+    }
+    .packLeft{display:flex; align-items:center; gap:10px; min-width:0}
+    .packLeft input[type="text"]{
+      width: min(420px, 55vw); max-width: 100%;
+      height:34px; padding:0 10px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.14);
+      color:var(--text); outline:none;
+    }
+    .packRight{display:flex; align-items:center; gap:8px}
+    .packRight .qty{
+      width:64px; height:34px; padding:0 8px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.14);
+      color:var(--text); outline:none;
+    }
+    .exportRow{margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+
+    /* Weather */
+    .weatherBox{margin-top:12px; border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); border-radius:16px; padding:12px; overflow:auto;}
+    .table{width:100%; border-collapse:collapse; min-width: 520px;}
+    .table th,.table td{padding:10px 10px; border-bottom:1px solid rgba(255,255,255,.10); font-size:14px; text-align:left;}
+    .table th{color:var(--muted); font-weight:700}
+    .badge{display:inline-flex; align-items:center; gap:8px; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.14);}
+
+    /* Spots */
+    .spotGrid{display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:12px;}
+    @media (max-width: 760px){ .spotGrid{grid-template-columns:1fr} }
+    .spotCard{border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06); border-radius:16px; padding:12px;}
+    .spotCardTitle{font-weight:800; margin-bottom:6px}
+    .spotLinks{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+  </style>
 </head>
 <body>
   <header class="top">
@@ -12,13 +221,15 @@
       <div>
         <div class="brand">RouteGenerator</div>
         <div class="tagline">
-          Weil Google Maps in der normalen Routeplanig nur bis zu <strong>10 Ziele</strong> (Start + 9 Zwischenstopps) erlaubt.
+          Weil Google Maps i de normale Routeplanig nur bis zu <strong>10 Ziele</strong> (Start + 9 Zwischenstopps) erlaubt.
         </div>
       </div>
 
       <div class="tripBox">
-        <label for="tripName">Trip-Name</label>
-        <input id="tripName" type="text" placeholder="z.B. Schottland 2026" />
+        <div>
+          <label for="tripName">Trip-Name</label>
+          <input id="tripName" type="text" placeholder="z.B. Schottland 2026" />
+        </div>
         <button id="saveTrip" class="btn">Speichere</button>
       </div>
     </div>
@@ -32,11 +243,10 @@
       <button class="tab" data-tab="spots">Spots</button>
     </nav>
 
-    <!-- ROUTE TAB -->
     <section id="tab-route" class="panel active">
       <div class="card">
         <h2>Route-Link erstellen</h2>
-        <p class="muted">Nutze Freitext oder Etappen. Link wird unten generiert.</p>
+        <p class="muted">Freitext oder Etappen → Google-Maps-Link generieren.</p>
 
         <div class="grid2">
           <div class="block">
@@ -72,7 +282,7 @@ Sion"></textarea>
             </div>
 
             <div id="stops" class="stops"></div>
-            <div class="smallMuted">Hinweis: Autocomplete ist via OpenStreetMap (Nominatim), daher bitte nicht “spammen”.</div>
+            <div class="smallMuted">Autocomplete via OpenStreetMap (Nominatim). Bitte nicht “spammen”.</div>
           </div>
         </div>
 
@@ -90,13 +300,12 @@ Sion"></textarea>
       </div>
     </section>
 
-    <!-- PACKLIST TAB -->
     <section id="tab-pack" class="panel">
       <div class="card">
         <div class="rowHead">
           <div>
             <h2>Packliste</h2>
-            <p class="muted">Autosave pro Trip (localStorage). Preset wählen oder eigene Items hinzufügen.</p>
+            <p class="muted">Autosave pro Trip (localStorage). Preset wählen oder Items hinzufügen.</p>
           </div>
           <div class="rowBtns">
             <select id="preset" class="select">
@@ -133,13 +342,12 @@ Sion"></textarea>
       </div>
     </section>
 
-    <!-- WEATHER TAB -->
     <section id="tab-weather" class="panel">
       <div class="card">
         <div class="rowHead">
           <div>
             <h2>Wetter (aktuell)</h2>
-            <p class="muted">Ohne API-Key. Nimmt deine Stops und zeigt aktuelles Wetter pro Ort.</p>
+            <p class="muted">Ohne API-Key. Nutzt deine Stops und zeigt aktuelles Wetter pro Ort.</p>
           </div>
           <div class="rowBtns">
             <button id="loadWeather" class="btn primary">Wetter laden</button>
@@ -147,25 +355,15 @@ Sion"></textarea>
           </div>
         </div>
 
-        <div class="smallMuted">
-          Tipp: Für viele Stops zuerst Route speichern, dann Wetter laden (Koordinaten werden gecacht).
-        </div>
-
         <div id="weatherBox" class="weatherBox"></div>
       </div>
     </section>
 
-    <!-- SPOTS TAB -->
     <section id="tab-spots" class="panel">
       <div class="card">
         <h2>Spots</h2>
-        <p class="muted">Einfacher Modus: Öffnet Google-Maps-Suchen “nahe Stop”. (Ohne schwere APIs)</p>
-
+        <p class="muted">Quick-Links: Öffnet Google-Maps-Suche “near Stop”.</p>
         <div class="spotGrid" id="spotGrid"></div>
-
-        <div class="smallMuted">
-          Wenn du willst, baue ich dir als nächstes echte OSM-Spots (Viewpoints/Wasserfälle/Peaks) via Overpass rein – mit Caching & Limit.
-        </div>
       </div>
     </section>
   </main>
@@ -181,6 +379,519 @@ Sion"></textarea>
     </div>
   </template>
 
-  <script src="script.js"></script>
+  <script>
+    // --------- Robust boot (shows errors in routeStatus) ----------
+    const q = (id) => document.getElementById(id);
+    const safe = (fn) => { try { fn(); } catch (e) { console.error(e); const rs=q("routeStatus"); if(rs) rs.textContent="JS Fehler: "+e.message; } };
+
+    // Storage keys
+    const APP_KEY = "routegen_v1";
+    const COORD_KEY = "routegen_coordcache_v1";
+
+    const getState = () => { try { return JSON.parse(localStorage.getItem(APP_KEY)) ?? {}; } catch { return {}; } };
+    const setState = (s) => localStorage.setItem(APP_KEY, JSON.stringify(s));
+    const getCoordCache = () => { try { return JSON.parse(localStorage.getItem(COORD_KEY)) ?? {}; } catch { return {}; } };
+    const setCoordCache = (c) => localStorage.setItem(COORD_KEY, JSON.stringify(c));
+
+    const encStop = (s) => encodeURIComponent(s.trim()).replaceAll("%20","+");
+    const parseFreeText = (t) => t.split(/-|,|\r?\n/).map(x=>x.trim()).filter(Boolean);
+    const uniq = (arr) => [...new Set(arr)];
+
+    // UUID fallback (falls randomUUID jemals fehlt)
+    const uuid = () => (crypto && crypto.randomUUID) ? crypto.randomUUID() : ("id-"+Math.random().toString(16).slice(2)+Date.now());
+
+    safe(() => {
+      // Elements
+      const tripNameEl = q("tripName");
+      const saveTripBtn = q("saveTrip");
+
+      const tabs = [...document.querySelectorAll(".tab")];
+      const panels = { route:q("tab-route"), pack:q("tab-pack"), weather:q("tab-weather"), spots:q("tab-spots") };
+
+      const stopsEl = q("stops");
+      const stopTpl = q("stopTemplate");
+
+      const freeInput = q("freeInput");
+      const generateTextBtn = q("generateText");
+      const clearTextBtn = q("clearText");
+      const routeStatus = q("routeStatus");
+
+      const addStopBtn = q("addStop");
+      const generateStopsBtn = q("generateStops");
+
+      const routeTextEl = q("routeText");
+      const linkOutEl = q("linkOut");
+      const copyBtn = q("copy");
+      const openA = q("open");
+
+      const presetEl = q("preset");
+      const applyPresetBtn = q("applyPreset");
+      const clearPackBtn = q("clearPack");
+      const newItemEl = q("newItem");
+      const newCatEl = q("newCat");
+      const addItemBtn = q("addItem");
+      const packListEl = q("packList");
+      const copyPackBtn = q("copyPack");
+      const downloadPackBtn = q("downloadPack");
+      const packStatus = q("packStatus");
+
+      const loadWeatherBtn = q("loadWeather");
+      const clearWeatherBtn = q("clearWeather");
+      const weatherBox = q("weatherBox");
+
+      const spotGrid = q("spotGrid");
+
+      // Tabs
+      tabs.forEach(btn => btn.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        btn.classList.add("active");
+        const name = btn.dataset.tab;
+        Object.values(panels).forEach(p => p.classList.remove("active"));
+        panels[name].classList.add("active");
+      }));
+
+      // Trip
+      const currentTripKey = () => ((tripNameEl.value || "default").trim() || "default");
+
+      const setRouteStatus = (msg) => routeStatus.textContent = msg;
+
+      function setOutput(values){
+        if(values.length < 2){
+          routeTextEl.textContent = "Bitte mind. 2 Orte eingeben.";
+          linkOutEl.value = "";
+          openA.removeAttribute("href");
+          return false;
+        }
+        routeTextEl.textContent = values.join(" → ");
+        const url = `https://www.google.com/maps/dir/${values.map(encStop).join("/")}`;
+        linkOutEl.value = url;
+        openA.href = url;
+        return true;
+      }
+
+      function updateStopNumbers(){
+        [...stopsEl.querySelectorAll(".stop")].forEach((stop,i)=>{
+          stop.querySelector(".stopNr").textContent = `Etappe ${i+1}`;
+        });
+      }
+
+      function createStop(initialValue=""){
+        const node = stopTpl.content.firstElementChild.cloneNode(true);
+        const input = node.querySelector(".stopInput");
+        const suggBox = node.querySelector(".suggestions");
+        const removeBtn = node.querySelector(".remove");
+
+        input.value = initialValue;
+
+        let debounceId=null;
+        let abortCtrl=null;
+
+        async function fetchSuggestions(qtxt){
+          if(abortCtrl) abortCtrl.abort();
+          abortCtrl = new AbortController();
+
+          const url = new URL("https://nominatim.openstreetmap.org/search");
+          url.searchParams.set("q", qtxt);
+          url.searchParams.set("format","json");
+          url.searchParams.set("addressdetails","1");
+          url.searchParams.set("limit","6");
+
+          const res = await fetch(url.toString(), {
+            signal: abortCtrl.signal,
+            headers: { "Accept-Language":"de" }
+          });
+          if(!res.ok) return [];
+          const data = await res.json();
+          return data.map(x => x.display_name);
+        }
+
+        function renderSuggestions(items){
+          suggBox.innerHTML="";
+          if(!items.length){ suggBox.classList.remove("show"); return; }
+          items.forEach(text=>{
+            const div=document.createElement("div");
+            div.className="sugg";
+            div.textContent=text;
+            div.addEventListener("click", ()=>{
+              input.value=text;
+              suggBox.classList.remove("show");
+              saveTrip();
+              renderSpotQuickLinks();
+            });
+            suggBox.appendChild(div);
+          });
+          suggBox.classList.add("show");
+        }
+
+        input.addEventListener("input", ()=>{
+          const qtxt = input.value.trim();
+          if(debounceId) clearTimeout(debounceId);
+          if(qtxt.length < 3){ suggBox.classList.remove("show"); return; }
+
+          debounceId = setTimeout(async ()=>{
+            try { renderSuggestions(await fetchSuggestions(qtxt)); } catch {}
+          }, 250);
+        });
+
+        input.addEventListener("blur", ()=> setTimeout(()=>suggBox.classList.remove("show"), 150));
+
+        removeBtn.addEventListener("click", ()=>{
+          node.remove();
+          updateStopNumbers();
+          saveTrip();
+          renderSpotQuickLinks();
+        });
+
+        stopsEl.appendChild(node);
+        updateStopNumbers();
+      }
+
+      function getStopsFromFields(){
+        return [...stopsEl.querySelectorAll(".stopInput")].map(i=>i.value.trim()).filter(Boolean);
+      }
+      function getStopsFromText(){
+        return parseFreeText(freeInput.value);
+      }
+      function getAllStopsForFeatures(){
+        const a = getStopsFromFields();
+        const b = getStopsFromText();
+        return a.length ? a : b;
+      }
+
+      function loadTrip(){
+        const state = getState();
+        const key = currentTripKey();
+        const trip = state[key] ?? {};
+
+        freeInput.value = trip.freeText ?? freeInput.value ?? "";
+
+        if(Array.isArray(trip.stops) && trip.stops.length){
+          stopsEl.innerHTML="";
+          trip.stops.forEach(v=>createStop(v));
+        } else if(!stopsEl.children.length){
+          createStop(""); createStop("");
+        }
+
+        renderPack(trip.pack ?? []);
+        updateStopNumbers();
+        renderSpotQuickLinks();
+        setRouteStatus(`Trip "${key}" geladen.`);
+      }
+
+      function saveTrip(){
+        const state = getState();
+        const key = currentTripKey();
+        state[key] = state[key] ?? {};
+        state[key].freeText = freeInput.value;
+        state[key].stops = getStopsFromFields();
+        state[key].pack = getPackFromUI();
+        state[key].savedAt = new Date().toISOString();
+        state.__lastTrip = key;
+        setState(state);
+      }
+
+      saveTripBtn.addEventListener("click", ()=>{ saveTrip(); setRouteStatus(`Gespeichert: "${currentTripKey()}"`); });
+      tripNameEl.addEventListener("change", loadTrip);
+
+      // Route actions
+      generateTextBtn.addEventListener("click", ()=>{
+        const values = getStopsFromText();
+        setRouteStatus(`Freitext: ${values.length} Stop(s) erkannt.`);
+        if(setOutput(values)) saveTrip();
+        renderSpotQuickLinks();
+      });
+      clearTextBtn.addEventListener("click", ()=>{
+        freeInput.value="";
+        setRouteStatus("Freitext geleert.");
+        saveTrip();
+        renderSpotQuickLinks();
+      });
+      freeInput.addEventListener("keydown", (e)=>{
+        if(e.key==="Enter" && (e.ctrlKey || e.metaKey)){
+          e.preventDefault();
+          generateTextBtn.click();
+        }
+      });
+
+      addStopBtn.addEventListener("click", ()=>{ createStop(""); saveTrip(); });
+      generateStopsBtn.addEventListener("click", ()=>{
+        const values = getStopsFromFields();
+        setRouteStatus(`Etappen: ${values.length} Stop(s) erkannt.`);
+        if(setOutput(values)) saveTrip();
+        renderSpotQuickLinks();
+      });
+
+      copyBtn.addEventListener("click", async ()=>{
+        const text = linkOutEl.value.trim();
+        if(!text) return;
+        try{
+          await navigator.clipboard.writeText(text);
+          copyBtn.textContent="Kopiert ✓";
+          setTimeout(()=>copyBtn.textContent="Kopieren", 900);
+        } catch {
+          linkOutEl.focus(); linkOutEl.select();
+          document.execCommand("copy");
+        }
+      });
+
+      // Packlist
+      const PRESETS = {
+        roadtrip: [["Dokumente","ID/Pass"],["Dokumente","Führerausweis"],["Technik","Handy + Ladekabel"],["Technik","Powerbank"],["Outdoor","Regenschutz"],["Hygiene","Reiseapotheke"],["Kleidung","Jacke"]],
+        hike: [["Outdoor","Rucksack"],["Outdoor","Regenjacke"],["Outdoor","Wanderschuhe"],["Outdoor","Stirnlampe"],["Technik","Powerbank"],["Hygiene","Blasenpflaster"]],
+        photo: [["Technik","Kamera"],["Technik","Ersatzakku"],["Technik","SD-Karten"],["Technik","Stativ"],["Outdoor","Regenschutz (Kamera)"]]
+      };
+
+      function escapeHtml(s){ return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;"); }
+
+      function normalizePack(items){
+        return items.map(it=>({
+          id: it.id ?? uuid(),
+          cat: it.cat ?? "Sonstiges",
+          text: (it.text ?? "").trim(),
+          done: !!it.done,
+          qty: parseInt(it.qty,10) || 1
+        })).filter(it=>it.text.length);
+      }
+
+      function getPackFromUI(){
+        const items=[];
+        packListEl.querySelectorAll(".packItem").forEach(row=>{
+          items.push({
+            id: row.dataset.id,
+            cat: row.dataset.cat,
+            done: row.querySelector("input[type=checkbox]").checked,
+            text: row.querySelector(".txt").value.trim(),
+            qty: parseInt(row.querySelector(".qty").value,10) || 1
+          });
+        });
+        return normalizePack(items);
+      }
+
+      function renderPack(items){
+        const norm = normalizePack(items);
+        const groups = {};
+        norm.forEach(it => (groups[it.cat] = groups[it.cat] ?? []).push(it));
+        const cats = Object.keys(groups).sort((a,b)=>a.localeCompare(b,"de"));
+
+        packListEl.innerHTML="";
+        if(!cats.length){
+          packListEl.innerHTML = `<div class="smallMuted">Noch kei Items. Wähle es Preset oder füeg eis hinzu.</div>`;
+          packStatus.textContent="–";
+          return;
+        }
+
+        cats.forEach(cat=>{
+          const box=document.createElement("div");
+          box.className="packGroup";
+          box.innerHTML = `<div class="packGroupTitle">${escapeHtml(cat)}</div>`;
+
+          groups[cat].forEach(it=>{
+            const row=document.createElement("div");
+            row.className="packItem";
+            row.dataset.id = it.id;
+            row.dataset.cat = cat;
+            row.innerHTML = `
+              <div class="packLeft">
+                <input type="checkbox" ${it.done?"checked":""}/>
+                <input class="txt" type="text" value="${escapeHtml(it.text)}"/>
+              </div>
+              <div class="packRight">
+                <input class="qty" type="number" min="1" value="${it.qty}"/>
+                <button class="btn btnTight del">Löschen</button>
+              </div>
+            `;
+            row.querySelector(".del").addEventListener("click", ()=>{
+              row.remove(); saveTrip(); renderPack(getPackFromUI());
+            });
+            row.querySelectorAll("input").forEach(inp=>{
+              inp.addEventListener("input", ()=>{ saveTrip(); packStatus.textContent="Autosave ✓"; });
+              inp.addEventListener("change", ()=>{ saveTrip(); packStatus.textContent="Autosave ✓"; });
+            });
+            box.appendChild(row);
+          });
+
+          packListEl.appendChild(box);
+        });
+
+        packStatus.textContent = `${norm.length} Item(s)`;
+      }
+
+      function packToMarkdown(trip, items){
+        const groups={};
+        items.forEach(it => (groups[it.cat] = groups[it.cat] ?? []).push(it));
+        const cats = Object.keys(groups).sort((a,b)=>a.localeCompare(b,"de"));
+        let out = `# Packliste – ${trip}\n\n`;
+        cats.forEach(cat=>{
+          out += `## ${cat}\n`;
+          groups[cat].forEach(it=> out += `- [${it.done?"x":" "}] ${it.text} (x${it.qty})\n`);
+          out += "\n";
+        });
+        return out.trim()+"\n";
+      }
+
+      applyPresetBtn.addEventListener("click", ()=>{
+        const key = presetEl.value;
+        if(!key) return;
+        const preset = PRESETS[key] ?? [];
+        const items = preset.map(([cat,text])=>({id:uuid(), cat, text, done:false, qty:1}));
+        renderPack(items); saveTrip(); packStatus.textContent=`Preset "${key}" geladen`;
+      });
+
+      clearPackBtn.addEventListener("click", ()=>{ renderPack([]); saveTrip(); });
+
+      addItemBtn.addEventListener("click", ()=>{
+        const text = newItemEl.value.trim();
+        if(!text) return;
+        const cat = newCatEl.value;
+        const items = getPackFromUI();
+        items.push({id:uuid(), cat, text, done:false, qty:1});
+        renderPack(items);
+        newItemEl.value="";
+        saveTrip();
+      });
+
+      copyPackBtn.addEventListener("click", async ()=>{
+        const md = packToMarkdown(currentTripKey(), getPackFromUI());
+        try { await navigator.clipboard.writeText(md); packStatus.textContent="Markdown kopiert ✓"; }
+        catch { packStatus.textContent="Kopieren nicht möglich (Browser)."; }
+      });
+
+      downloadPackBtn.addEventListener("click", ()=>{
+        const md = packToMarkdown(currentTripKey(), getPackFromUI());
+        const blob = new Blob([md], {type:"text/plain;charset=utf-8"});
+        const a=document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `packliste_${currentTripKey().replaceAll(" ","_")}.txt`;
+        document.body.appendChild(a); a.click(); a.remove();
+      });
+
+      // Weather (Open-Meteo)
+      async function geocodeOpenMeteo(name){
+        const cache=getCoordCache();
+        const key=name.trim().toLowerCase();
+        if(cache[key]) return cache[key];
+
+        const url=new URL("https://geocoding-api.open-meteo.com/v1/search");
+        url.searchParams.set("name", name);
+        url.searchParams.set("count","1");
+        url.searchParams.set("language","de");
+        url.searchParams.set("format","json");
+
+        const res=await fetch(url.toString());
+        if(!res.ok) throw new Error("Geocoding failed");
+        const data=await res.json();
+        const r=data?.results?.[0];
+        if(!r) return null;
+
+        const coord={ name:r.name, country:r.country, admin1:r.admin1, lat:r.latitude, lon:r.longitude };
+        cache[key]=coord; setCoordCache(cache);
+        return coord;
+      }
+
+      async function fetchCurrentWeather(lat,lon){
+        const url=new URL("https://api.open-meteo.com/v1/forecast");
+        url.searchParams.set("latitude", String(lat));
+        url.searchParams.set("longitude", String(lon));
+        url.searchParams.set("current","temperature_2m,precipitation,wind_speed_10m");
+        url.searchParams.set("timezone","Europe/Zurich");
+        const res=await fetch(url.toString());
+        if(!res.ok) throw new Error("Weather failed");
+        const data=await res.json();
+        return data.current;
+      }
+
+      loadWeatherBtn.addEventListener("click", async ()=>{
+        const stops = getAllStopsForFeatures();
+        if(!stops.length){
+          weatherBox.innerHTML = `<div class="smallMuted">Bitte zuerst Stops erfassen (Route-Tab).</div>`;
+          return;
+        }
+        weatherBox.innerHTML = `<div class="smallMuted">Lade Wetter…</div>`;
+        const limited = stops.slice(0, 12);
+        const rows=[];
+        for(const s of limited){
+          try{
+            const geo=await geocodeOpenMeteo(s);
+            if(!geo){ rows.push({place:s, err:"nicht gefunden"}); continue; }
+            const cur=await fetchCurrentWeather(geo.lat, geo.lon);
+            rows.push({
+              place:`${geo.name}${geo.admin1?(", "+geo.admin1):""}${geo.country?(", "+geo.country):""}`,
+              temp:cur.temperature_2m, rain:cur.precipitation, wind:cur.wind_speed_10m, time:cur.time
+            });
+          } catch {
+            rows.push({place:s, err:"Fehler"});
+          }
+        }
+        weatherBox.innerHTML = `
+          <table class="table">
+            <thead><tr><th>Ort</th><th>Temp</th><th>Regen</th><th>Wind</th><th>Zeit</th></tr></thead>
+            <tbody>
+              ${rows.map(r=>`
+                <tr>
+                  <td>${escapeHtml(r.place)}</td>
+                  <td>${r.err?"–":`${r.temp}°C`}</td>
+                  <td>${r.err?"–":`${r.rain} mm`}</td>
+                  <td>${r.err?"–":`${r.wind} km/h`}</td>
+                  <td>${r.err?`<span class="badge">⚠ ${escapeHtml(r.err)}</span>`:escapeHtml(r.time)}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          <div class="smallMuted">Hinweis: nur erste ${limited.length} Stops geladen.</div>
+        `;
+      });
+
+      clearWeatherBtn.addEventListener("click", ()=>{ weatherBox.innerHTML=""; });
+
+      // Spots quick links
+      function renderSpotQuickLinks(){
+        const stops = uniq(getAllStopsForFeatures()).slice(0,8);
+        if(!stops.length){
+          spotGrid.innerHTML = `<div class="smallMuted">Erfasch zuerst Stops im Route-Tab.</div>`;
+          return;
+        }
+        const types = [
+          {label:"Viewpoints", q:"viewpoint near "},
+          {label:"Wasserfälle", q:"waterfall near "},
+          {label:"Wanderung", q:"hike trail near "},
+          {label:"Fotospot", q:"photo spot near "}
+        ];
+        spotGrid.innerHTML="";
+        stops.forEach(stop=>{
+          const box=document.createElement("div");
+          box.className="spotCard";
+          box.innerHTML = `
+            <div class="spotCardTitle">${escapeHtml(stop)}</div>
+            <div class="smallMuted">Quick-Search in Google Maps:</div>
+            <div class="spotLinks"></div>
+          `;
+          const links=box.querySelector(".spotLinks");
+          types.forEach(t=>{
+            const a=document.createElement("a");
+            a.className="btn btnTight";
+            a.target="_blank"; a.rel="noopener";
+            a.textContent=t.label;
+            a.href=`https://www.google.com/maps/search/${encodeURIComponent(t.q + stop)}`;
+            links.appendChild(a);
+          });
+          spotGrid.appendChild(box);
+        });
+      }
+
+      // Init
+      (function init(){
+        // last trip
+        const st = getState();
+        if(st.__lastTrip) tripNameEl.value = st.__lastTrip;
+
+        // ensure stops exist
+        if(!stopsEl.children.length){ createStop(""); createStop(""); }
+
+        loadTrip();
+        renderSpotQuickLinks();
+        setRouteStatus("Bereit.");
+      })();
+    });
+  </script>
 </body>
 </html>
