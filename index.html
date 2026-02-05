@@ -3,88 +3,172 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Maps-Link Builder</title>
+  <title>RouteGenerator</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  <header class="top">
+    <div class="topInner">
+      <div>
+        <div class="brand">RouteGenerator</div>
+        <div class="tagline">
+          Weil Google Maps in der normalen Routeplanig nur bis zu <strong>10 Ziele</strong> (Start + 9 Zwischenstopps) erlaubt.
+        </div>
+      </div>
+
+      <div class="tripBox">
+        <label for="tripName">Trip-Name</label>
+        <input id="tripName" type="text" placeholder="z.B. Schottland 2026" />
+        <button id="saveTrip" class="btn">Speichere</button>
+      </div>
+    </div>
+  </header>
+
   <main class="wrap">
-    <section class="card">
-      <h1>Google-Maps Link Builder</h1>
+    <nav class="tabs" aria-label="Tabs">
+      <button class="tab active" data-tab="route">Route</button>
+      <button class="tab" data-tab="pack">Packliste</button>
+      <button class="tab" data-tab="weather">Wetter</button>
+      <button class="tab" data-tab="spots">Spots</button>
+    </nav>
 
-      <div class="intro">
-        Google Maps erlaubt standardmässig nur bis zu <strong>10 Ziele</strong> pro Route (Start + 9 Zwischenstopps).
-        <br /> 
-        Mit diesem Tool kannst du beliebig viele Stopps eingeben und daraus einen einzigen Link generieren, der alle Stopps enthält.
-      </div>
+    <!-- ROUTE TAB -->
+    <section id="tab-route" class="panel active">
+      <div class="card">
+        <h2>Route-Link erstellen</h2>
+        <p class="muted">Nutze Freitext oder Etappen. Link wird unten generiert.</p>
 
-      <p class="subtitle">Freitext oder Etappen → Link generieren</p>
-
-      <!-- Schnellmodus -->
-      <div class="block">
-        <div class="blockHead">
-          <div>
-            <div class="blockTitle">Schnellmodus (Freitext)</div>
-            <div class="blockHint">
-              Trennzeichen: <code>-</code> <code>,</code> oder Zeilenumbruch ·
-              <strong>Ctrl+Enter</strong> / <strong>Cmd+Enter</strong> generiert
+        <div class="grid2">
+          <div class="block">
+            <div class="blockHead">
+              <div>
+                <div class="blockTitle">Schnellmodus (Freitext)</div>
+                <div class="blockHint">Trennzeichen: <code>-</code>, <code>,</code> oder Zeilenumbruch · <strong>Ctrl/Cmd+Enter</strong> generiert</div>
+              </div>
+              <div class="blockBtns">
+                <button id="generateText" class="btn primary">Generieren</button>
+                <button id="clearText" class="btn">Leeren</button>
+              </div>
             </div>
-          </div>
-          <div class="blockBtns">
-            <button id="generateText" class="btn primary">Aus Freitext generieren</button>
-            <button id="clearText" class="btn">Leeren</button>
-          </div>
-        </div>
 
-        <textarea
-          id="freeInput"
-          class="textArea"
-          placeholder="z.B.
-Winterthur, Zürich, Bern
-
+            <textarea id="freeInput" class="textArea" rows="7"
+              placeholder="Winterthur, Zürich, Bern
 Genf - Lausanne
-Sion"
-          rows="5"
-        ></textarea>
+Sion"></textarea>
 
-        <div id="status" class="status">Bereit.</div>
-      </div>
+            <div id="routeStatus" class="status">Bereit.</div>
+          </div>
 
-      <!-- Etappen -->
-      <div class="block">
-        <div class="blockHead">
-          <div>
-            <div class="blockTitle">Etappen (mit Vorschlägen)</div>
-            <div class="blockHint">Tippe mind. 3 Zeichen, dann Vorschlag anklicken</div>
+          <div class="block">
+            <div class="blockHead">
+              <div>
+                <div class="blockTitle">Etappen (Autocomplete)</div>
+                <div class="blockHint">Tippe mind. 3 Zeichen → Vorschlag anklicken</div>
+              </div>
+              <div class="blockBtns">
+                <button id="addStop" class="btn">+ Stopp</button>
+                <button id="generateStops" class="btn primary">Generieren</button>
+              </div>
+            </div>
+
+            <div id="stops" class="stops"></div>
+            <div class="smallMuted">Hinweis: Autocomplete ist via OpenStreetMap (Nominatim), daher bitte nicht “spammen”.</div>
           </div>
         </div>
 
-        <div id="stops" class="stops"></div>
+        <div class="output">
+          <div class="label">Route (Text)</div>
+          <div id="routeText" class="routeText">–</div>
+
+          <div class="label">Google-Maps-Gesamtlink</div>
+          <div class="linkRow">
+            <input id="linkOut" class="linkOut" type="text" readonly placeholder="Hier erscheint der Link…" />
+            <button id="copy" class="btn btnTight">Kopieren</button>
+            <a id="open" class="btn btnTight" target="_blank" rel="noopener">Öffnen</a>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <!-- Output -->
-      <div class="output">
-        <div class="label">Route (Text)</div>
-        <div id="routeText" class="routeText">–</div>
-
-        <div class="label">Google-Maps-Gesamtlink</div>
-        <div class="linkRow">
-          <input id="linkOut" class="linkOut" type="text" readonly placeholder="Hier erscheint der Link…" />
-          <button id="copy" class="btn btnSmall">Kopieren</button>
-          <a id="open" class="btn btnSmall" target="_blank" rel="noopener">Öffnen</a>
+    <!-- PACKLIST TAB -->
+    <section id="tab-pack" class="panel">
+      <div class="card">
+        <div class="rowHead">
+          <div>
+            <h2>Packliste</h2>
+            <p class="muted">Autosave pro Trip (localStorage). Preset wählen oder eigene Items hinzufügen.</p>
+          </div>
+          <div class="rowBtns">
+            <select id="preset" class="select">
+              <option value="">Preset wählen…</option>
+              <option value="roadtrip">Roadtrip</option>
+              <option value="hike">Wandern</option>
+              <option value="photo">Foto</option>
+            </select>
+            <button id="applyPreset" class="btn primary">Preset laden</button>
+            <button id="clearPack" class="btn">Alles leeren</button>
+          </div>
         </div>
 
-        
+        <div class="addItem">
+          <input id="newItem" class="input" placeholder="Neues Item (z.B. Stirnlampe)" />
+          <select id="newCat" class="select">
+            <option>Kleidung</option>
+            <option>Outdoor</option>
+            <option>Technik</option>
+            <option>Hygiene</option>
+            <option>Dokumente</option>
+            <option>Sonstiges</option>
+          </select>
+          <button id="addItem" class="btn primary">Hinzufügen</button>
+        </div>
+
+        <div id="packList" class="packList"></div>
+
+        <div class="exportRow">
+          <button id="copyPack" class="btn btnTight">Markdown kopieren</button>
+          <button id="downloadPack" class="btn btnTight">Als .txt herunterladen</button>
+          <div class="smallMuted" id="packStatus">–</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- WEATHER TAB -->
+    <section id="tab-weather" class="panel">
+      <div class="card">
+        <div class="rowHead">
+          <div>
+            <h2>Wetter (aktuell)</h2>
+            <p class="muted">Ohne API-Key. Nimmt deine Stops und zeigt aktuelles Wetter pro Ort.</p>
+          </div>
+          <div class="rowBtns">
+            <button id="loadWeather" class="btn primary">Wetter laden</button>
+            <button id="clearWeather" class="btn">Leeren</button>
+          </div>
+        </div>
+
+        <div class="smallMuted">
+          Tipp: Für viele Stops zuerst Route speichern, dann Wetter laden (Koordinaten werden gecacht).
+        </div>
+
+        <div id="weatherBox" class="weatherBox"></div>
+      </div>
+    </section>
+
+    <!-- SPOTS TAB -->
+    <section id="tab-spots" class="panel">
+      <div class="card">
+        <h2>Spots</h2>
+        <p class="muted">Einfacher Modus: Öffnet Google-Maps-Suchen “nahe Stop”. (Ohne schwere APIs)</p>
+
+        <div class="spotGrid" id="spotGrid"></div>
+
+        <div class="smallMuted">
+          Wenn du willst, baue ich dir als nächstes echte OSM-Spots (Viewpoints/Wasserfälle/Peaks) via Overpass rein – mit Caching & Limit.
+        </div>
       </div>
     </section>
   </main>
-
-  <!-- Sticky bottom bar -->
-  <div class="bottomBar">
-    <div class="bottomInner">
-      <button id="addStop" class="btn">+ Stopp hinzufügen</button>
-      <button id="generateStops" class="btn primary">Link aus Etappen generieren</button>
-    </div>
-  </div>
 
   <template id="stopTemplate">
     <div class="stop">
@@ -92,8 +176,7 @@ Sion"
         <span class="stopNr"></span>
         <button class="iconBtn remove" title="Entfernen" aria-label="Entfernen">✕</button>
       </div>
-
-      <input class="stopInput" type="text" placeholder="Ort eingeben (z.B. Edinburgh)…" autocomplete="off" />
+      <input class="stopInput" type="text" placeholder="Ort eingeben (z.B. Edinburgh)..." autocomplete="off" />
       <div class="suggestions"></div>
     </div>
   </template>
