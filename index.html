@@ -10,8 +10,22 @@
   <main class="wrap">
     <section class="card">
       <h1>Google-Maps Link Builder</h1>
-      <p class="subtitle">Etappen hinzufügen → Vorschläge auswählen → Link generieren</p>
+      <p class="subtitle">Freitext oder Etappen hinzufügen → Link generieren</p>
 
+      <!-- Schnellmodus -->
+      <div class="freeText">
+        <label for="freeInput">Schnellmodus (Freitext)</label>
+        <textarea
+          id="freeInput"
+          placeholder="z.B. Winterthur - Zürich - Bern - Genf - Lausanne - Sion"
+          rows="3"
+        ></textarea>
+        <div class="smallHint">Trennzeichen: <code>-</code> <code>→</code> <code>&gt;</code> oder Zeilenumbruch</div>
+      </div>
+
+      <div class="divider">oder</div>
+
+      <!-- Etappen-Modus -->
       <div id="stops" class="stops"></div>
 
       <div class="actions">
@@ -31,7 +45,8 @@
         </div>
 
         <p class="hint">
-            Hinweis: Google Maps unterstützt maximal 10 Ziele (inkl. Start). Bei mehr als 10 Etappen wird der Link möglicherweise nicht korrekt funktionieren. In diesem Fall können Sie die Route in mehrere Abschnitte aufteilen oder eine alternative Kartenanwendung verwenden, die mehr Ziele unterstützt.
+          Autocomplete nutzt OpenStreetMap (Nominatim) – super für kleine Projekte, hat aber Rate-Limits.
+          Für Google-Places-Autocomplete brauchst du später einen API-Key.
         </p>
       </div>
     </section>
