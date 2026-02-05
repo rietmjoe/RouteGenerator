@@ -23,7 +23,10 @@
         <div class="blockHead">
           <div>
             <div class="blockTitle">Schnellmodus (Freitext)</div>
-            <div class="blockHint">Trennzeichen: <code>-</code> <code>,</code> oder Zeilenumbruch</div>
+            <div class="blockHint">
+              Trennzeichen: <code>-</code> <code>,</code> oder Zeilenumbruch ·
+              <strong>Ctrl+Enter</strong> / <strong>Cmd+Enter</strong> generiert
+            </div>
           </div>
           <div class="blockBtns">
             <button id="generateText" class="btn primary">Aus Freitext generieren</button>
@@ -36,9 +39,10 @@
           class="textArea"
           placeholder="z.B.
 Winterthur, Zürich, Bern
+
 Genf - Lausanne
 Sion"
-          rows="4"
+          rows="5"
         ></textarea>
 
         <div id="status" class="status">Bereit.</div>
@@ -64,8 +68,8 @@ Sion"
         <div class="label">Google-Maps-Gesamtlink</div>
         <div class="linkRow">
           <input id="linkOut" class="linkOut" type="text" readonly placeholder="Hier erscheint der Link…" />
-          <button id="copy" class="btn">Kopieren</button>
-          <a id="open" class="btn" target="_blank" rel="noopener">Öffnen</a>
+          <button id="copy" class="btn btnSmall">Kopieren</button>
+          <a id="open" class="btn btnSmall" target="_blank" rel="noopener">Öffnen</a>
         </div>
 
         <p class="hint">
@@ -75,7 +79,7 @@ Sion"
     </section>
   </main>
 
-  <!-- Sticky bottom bar (immer sichtbar) -->
+  <!-- Sticky bottom bar -->
   <div class="bottomBar">
     <div class="bottomInner">
       <button id="addStop" class="btn">+ Stopp hinzufügen</button>

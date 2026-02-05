@@ -20,7 +20,6 @@ const linkOutEl = byId("linkOut");
 const copyBtn = byId("copy");
 const openA = byId("open");
 
-// --- Helpers ---
 function encodeStop(s) {
   return encodeURIComponent(s.trim()).replaceAll("%20", "+");
 }
@@ -68,7 +67,6 @@ function createStop(initialValue = "") {
 
   input.value = initialValue;
 
-  // --- Autocomplete via Nominatim (OSM) ---
   let debounceId = null;
   let abortCtrl = null;
 
@@ -129,7 +127,7 @@ function createStop(initialValue = "") {
         const items = await fetchSuggestions(q);
         renderSuggestions(items);
       } catch {
-        // aborted/offline -> ignore
+        // ignore
       }
     }, 250);
   });
@@ -147,19 +145,15 @@ function createStop(initialValue = "") {
   updateNumbers();
 }
 
-// --- Initial stops ---
+// Initial
 createStop("");
 createStop("");
 
-// --- Freitext actions ---
+// Freitext: Button generiert
 generateTextBtn.addEventListener("click", () => {
-  const raw = freeInput.value;
-  const values = parseFreeText(raw);
-
+  const values = parseFreeText(freeInput.value);
   setStatus(`Freitext erkannt: ${values.length} Stop(s).`);
-
-  const ok = setOutput(values);
-  if (!ok) setStatus("Bitte mind. 2 Orte im Freitext eingeben.");
+  if (!setOutput(values)) setStatus("Bitte mind. 2 Orte im Freitext eingeben.");
 });
 
 clearTextBtn.addEventListener("click", () => {
@@ -168,15 +162,15 @@ clearTextBtn.addEventListener("click", () => {
   setStatus("Freitext geleert.");
 });
 
-// ENTER im Freitextfeld generiert (ohne Shift), Shift+Enter macht neue Zeile
+// Ctrl/Cmd+Enter generiert (Enter bleibt Zeilenumbruch, auch Leerzeile)
 freeInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
+  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
     generateTextBtn.click();
   }
 });
 
-// --- Stops actions ---
+// Stops: Bottom bar
 addStopBtn.addEventListener("click", () => createStop(""));
 
 generateStopsBtn.addEventListener("click", () => {
@@ -188,7 +182,7 @@ generateStopsBtn.addEventListener("click", () => {
   setOutput(values);
 });
 
-// --- Copy ---
+// Copy
 copyBtn.addEventListener("click", async () => {
   const text = linkOutEl.value.trim();
   if (!text) return;
